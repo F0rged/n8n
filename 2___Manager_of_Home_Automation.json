@@ -1,0 +1,253 @@
+{
+  "name": "2 - Manager of Home Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "userRequest"
+            },
+            {
+              "name": "agentObjective"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        -60
+      ],
+      "id": "b08b1cec-176a-457e-8d60-76b353806fb5",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=USER REQUEST:\n-----------------------\n{{ $json.userRequest }}\n\n\nYOUR OBJECTIVE:\n-----------------------\n{{ $json.agentObjective }}\n\n\nRESULT:\n-----------------------",
+        "options": {
+          "systemMessage": "=AGENT DIRECTIVE:\n-----------------------\nYou are a helpful assistant that has access to the family's home automation server 'home assistant'.\n\nYou will be provided with a request from an end user, and also the objective you are being given in relation to that request.\nYour response will be used by a master planning agent who will ultimately respond to the user.\nThe master planning agent would not have routed you the request if it didnt think you had the right tools, so the chances are very high that you can meet your objective using one of your tools.\n\nAVAILABLE TOOLS\n-----------------------\n1. Turn on a light\n2. Turn off a light\n\nAVAILABLE LIGHTS\n-----------------------\nEntityID: light.dining_room_pendants\nDescription: Pendant lights over the dining table in the dining room.\n\nEntityID: light.in_wall_600w_dimmer\nDescription: Main light in the living room.\n\nEntityID: light.master_bed_light_2\nDescription: Integrated lights built into the bed in the master bedroom. (They aim at the floor and provide soft lighting).\n\nEntityID: light.wiz_tunable_white_e5d667\nDescription: Ceiling lights in the master bedroom.\n\nEntityID: switch.christmas_tree_wall_socket\nDescription: Christmas tree lights.\n\nEntityID: light.wizentrancelightrgb\nDescription: Front Entrance Indoor Light (in hallyway near front door)\n\nEntityID: switch.plug_in_appliance_module\nDescription: Ensuite Bathroom Salt Rock Light\n\nEntityID: light.ensuite_bathroom_vanity_lights\nDescription: Ensuite Bathroom Vanity Lights\n\nEntityID: light.lilys_bedroom_main_lights\nDescription: Lilys bedroom lights\n\nEntityID: switch.back_deck_back_porch_lights\nDescription: Back Deck Light\n\nEntityID: switch.driveway_pot_lights\nDescription: Driveway lights\n\nEntityID: light.front_porch_light\nDescription: Front Porch Entrance Outdoor Light",
+          "maxIterations": 2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -140,
+        -60
+      ],
+      "id": "5e3dc0ca-a443-4b90-8462-f75acde491be",
+      "name": "AI Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        160
+      ],
+      "id": "76330cbd-9ed0-4b86-9283-1d4da8fdbed4",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Z8ZFTtotfZJISIay",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "TurnOnLight",
+        "description": "Call this tool to turn on lights in the house",
+        "workflowId": {
+          "__rl": true,
+          "value": "KpVJULkTyg9RBRyV",
+          "mode": "list",
+          "cachedResultName": "3 - Turn On/Off Lights"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "turn-on",
+            "entityId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('entityId', `The Entity ID for the Light`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "entityId",
+              "displayName": "entityId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "entityType",
+              "displayName": "entityType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        340,
+        200
+      ],
+      "id": "5d18a036-1d29-42d0-ac72-2f7359285998",
+      "name": "Turn On Light"
+    },
+    {
+      "parameters": {
+        "name": "TurnOffLight",
+        "description": "Call this tool to turn off lights in the house",
+        "workflowId": {
+          "__rl": true,
+          "value": "KpVJULkTyg9RBRyV",
+          "mode": "list",
+          "cachedResultName": "3 - Turn On/Off Lights"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "turn-off",
+            "entityId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('entityId', `The Entity ID for the Light`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "entityId",
+              "displayName": "entityId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "entityType",
+              "displayName": "entityType",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        200,
+        200
+      ],
+      "id": "d7bf7188-0190-4139-a951-26208c80e6ff",
+      "name": "Turn Off Light"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "userRequest": "turn off the dining room light",
+          "agentObjective": "turn off the dining room light"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Turn On Light": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Turn Off Light": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1a87fa36-7b0d-4e80-972a-23005a37896f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ac975547172c3ff12852fb9beb91829001191c03132e040ed45fb2e0cd1f79c6"
+  },
+  "id": "voQGlXyYLpVVDtvQ",
+  "tags": []
+}

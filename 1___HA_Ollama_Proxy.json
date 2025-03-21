@@ -1,0 +1,497 @@
+{
+  "name": "1 - HA Ollama Proxy",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "version",
+        "options": {
+          "responseData": "{     \"version\": \"0.5.13\" }"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        -580
+      ],
+      "id": "3dfac6b8-4d9a-46a9-980f-aece5b4bef63",
+      "name": "GET version",
+      "webhookId": "99ca1b0c-6fbd-47de-a30a-c184e96f3588"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        -280
+      ],
+      "id": "195aab46-ffa2-4e19-99b1-ae4db182ea16",
+      "name": "Chat",
+      "webhookId": "43062a69-9b51-4ee8-b240-8d711de15e94"
+    },
+    {
+      "parameters": {
+        "path": "tags",
+        "options": {
+          "responseData": "{     \"models\": [         {             \"name\": \"llama3.2:latest\",             \"model\": \"llama3.2:latest\",             \"modified_at\": \"2025-03-05T20:11:32.225032-08:00\",             \"size\": 2019393189,             \"digest\": \"a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72\",             \"details\": {                 \"parent_model\": \"\",                 \"format\": \"gguf\",                 \"family\": \"llama\",                 \"families\": [                     \"llama\"                 ],                 \"parameter_size\": \"3.2B\",                 \"quantization_level\": \"Q4_K_M\"             }         },         {             \"name\": \"deepseek-r1:latest\",             \"model\": \"deepseek-r1:latest\",             \"modified_at\": \"2025-03-03T17:26:50.7367646-08:00\",             \"size\": 4683075271,             \"digest\": \"0a8c266910232fd3291e71e5ba1e058cc5af9d411192cf88b6d30e92b6e73163\",             \"details\": {                 \"parent_model\": \"\",                 \"format\": \"gguf\",                 \"family\": \"qwen2\",                 \"families\": [                     \"qwen2\"                 ],                 \"parameter_size\": \"7.6B\",                 \"quantization_level\": \"Q4_K_M\"             }         },         {             \"name\": \"deepseek-r1:1.5b\",             \"model\": \"deepseek-r1:1.5b\",             \"modified_at\": \"2025-03-02T18:54:23.6412071-08:00\",             \"size\": 1117322599,             \"digest\": \"a42b25d8c10a841bd24724309898ae851466696a7d7f3a0a408b895538ccbc96\",             \"details\": {                 \"parent_model\": \"\",                 \"format\": \"gguf\",                 \"family\": \"qwen2\",                 \"families\": [                     \"qwen2\"                 ],                 \"parameter_size\": \"1.8B\",                 \"quantization_level\": \"Q4_K_M\"             }         },         {             \"name\": \"deepseek-r1:14b\",             \"model\": \"deepseek-r1:14b\",             \"modified_at\": \"2025-03-02T16:09:37.6128441-08:00\",             \"size\": 8988112040,             \"digest\": \"ea35dfe18182f635ee2b214ea30b7520fe1ada68da018f8b395b444b662d4f1a\",             \"details\": {                 \"parent_model\": \"\",                 \"format\": \"gguf\",                 \"family\": \"qwen2\",                 \"families\": [                     \"qwen2\"                 ],                 \"parameter_size\": \"14.8B\",                 \"quantization_level\": \"Q4_K_M\"             }         }     ] }"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        -580
+      ],
+      "id": "7950f24d-5e0b-4bd8-998b-b2193215d8a8",
+      "name": "List Models",
+      "webhookId": "d0556f7b-2602-4040-8c4f-296fec5339bf"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -580
+      ],
+      "id": "7b51abe1-7ef8-4350-ae9f-218fa344c4ea",
+      "name": "Webhook",
+      "webhookId": "0516b3d8-7d1f-411a-be4e-e70c0a255380"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"model\": \"llama3.2\",\n    \"created_at\": \"2025-03-12T02:42:49.823678882Z\",\n    \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"Bro! {{ $json.output.replace(/['\"*|\\n]+/g, '')}}\",\n        \"tool_calls\": [\n            {\n                \"function\": {\n                    \"name\": \"HassTurnOff\",\n                    \"arguments\": {\n                        \"area\": \"\",\n                        \"device_class\": null,\n                        \"domain\": null,\n                        \"floor\": null,\n                        \"name\": \"Dining Room Pendants\"\n                    }\n                }\n            }\n        ]\n    },\n    \"done_reason\": \"stop\",\n    \"done\": true,\n    \"total_duration\": 26621387245,\n    \"load_duration\": 33544945,\n    \"prompt_eval_count\": 254,\n    \"prompt_eval_duration\": 16445000000,\n    \"eval_count\": 44,\n    \"eval_duration\": 10116000000\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -360
+      ],
+      "id": "a47a5a2f-4a4a-4d3f-8806-4d18af55939d",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=CONVERSATION HISTORY:\n-------------------\nLast user message:\n{{ $json.body.messages.filter(message => message.role === \"user\").slice(-1)[0]?.content || \"No previous messages\" }}\n\nLast system/agent response:\n{{ $json.body.messages.filter(message => message.role === \"assistant\").slice(-1)[0]?.content || \"No previous messages\" }}\n\n\nCURRENT USER REQUEST:\n-------------------\n{{ $json.body.messages[$json.body.messages.length-1].content }}",
+        "options": {
+          "systemMessage": "You are a helpful family assistant that responds to user requests.\nYou have access to a number of tools that you can use to answer any questions or requests that the user might give you.\nONLY USE TOOLS IF YOU NEED TO!\nDO NOT USE TOOLS IF THEY ARE UNRELATED TO THE REQUEST.\nEx. Dont call the family calendar manager if you are asked to tell a joke.\n\nTOOLS\n------------------------------------\n1. Family Calendar Manager.  The family calendar manager knows about all sorts of family planned events (family events, local events, etc) and can create and update calendar events for the family.",
+          "maxIterations": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        -280
+      ],
+      "id": "3801b1b5-ede6-4f6c-91db-48e689e305c0",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "name": "AskFamilyCalendarManager",
+        "description": "Call this tool to action any requests relating to events",
+        "workflowId": {
+          "__rl": true,
+          "value": "EtdKKZQjojsJePFR",
+          "mode": "list",
+          "cachedResultName": "2 - Manager of Events"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "agentObjective": "={{ $fromAI(\"agentObjective\", \"The request or activity that we are asking the family calendar manager to perform in relation to the users request\", \"string\", \"Get a list of events from the family calendar\") }}",
+            "userRequest": "={{ $('Chat').item.json.body.messages[$('Chat').item.json.body.messages.length-1].content }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "userRequest",
+              "displayName": "userRequest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "agentObjective",
+              "displayName": "agentObjective",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        380,
+        -40
+      ],
+      "id": "a9b24e3a-2aaf-4c6c-9912-a555f02bb900",
+      "name": "Call Event Manager"
+    },
+    {
+      "parameters": {
+        "model": "llama3-70b-8192",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -40
+      ],
+      "id": "b1946335-8234-451c-8e54-967dc7ccf02f",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "Z8ZFTtotfZJISIay",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dc5d4bef-2d14-4d9c-bf31-35cfe433b50d",
+              "leftValue": "={{ $('AI Agent1').item.json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        380,
+        -280
+      ],
+      "id": "2dc78126-3272-4d3c-9f6a-dda32cce7ad8",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c70aec5b-3203-4fa3-8fe7-c899d4d14a37",
+              "name": "output",
+              "value": "Sorry Bro,. I cant figure out how to help with that.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -180
+      ],
+      "id": "d9c7e19f-38cc-4a95-9bb1-70f2b4b71205",
+      "name": "Failure Response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e23a1ee5-0536-4049-8447-83382e67947c",
+              "leftValue": "={{ $json.body.messages[$json.body.messages.length-1].role }}",
+              "rightValue": "user",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -380,
+        -280
+      ],
+      "id": "9c7e649c-220a-476a-8f4e-e6398f1699bf",
+      "name": "User Call"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"model\": \"llama3.2\",\n    \"created_at\": \"2025-03-12T02:42:49.823678882Z\",\n    \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"Tool action completed\"\n    },\n    \"done_reason\": \"stop\",\n    \"done\": true,\n    \"total_duration\": 26621387245,\n    \"load_duration\": 33544945,\n    \"prompt_eval_count\": 254,\n    \"prompt_eval_duration\": 16445000000,\n    \"eval_count\": 44,\n    \"eval_duration\": 10116000000\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -360,
+        -40
+      ],
+      "id": "729063b5-3a27-4198-9a55-043c7905b115",
+      "name": "Tools Confirmation Response"
+    },
+    {
+      "parameters": {
+        "name": "AskHomeAutomationManager",
+        "description": "Call this tool to action any requests relating to home automation (lights, cameras, sensors, etc)",
+        "workflowId": {
+          "__rl": true,
+          "value": "voQGlXyYLpVVDtvQ",
+          "mode": "list",
+          "cachedResultName": "2 - Manager of Home Automation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userRequest": "={{ $('Chat').item.json.body.messages[$('Chat').item.json.body.messages.length-1].content }}",
+            "agentObjective": "={{ $fromAI(\"agentObjective\", \"The request or activity that we are asking the home automation manager to perform in relation to the users request\", \"string\", \"Turn on the living room light\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "userRequest",
+              "displayName": "userRequest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "agentObjective",
+              "displayName": "agentObjective",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "0b080e70-16dd-4144-afd0-22a1d5092b86",
+      "name": "Call Home Automation Manager"
+    }
+  ],
+  "pinData": {
+    "Chat": [
+      {
+        "json": {
+          "headers": {
+            "host": "192.168.1.4:5678",
+            "accept-encoding": "gzip, deflate, br",
+            "connection": "keep-alive",
+            "content-type": "application/json",
+            "accept": "application/json",
+            "user-agent": "ollama-python/0.3.3 (x86_64 linux) Python/3.13.0",
+            "content-length": "537"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "model": "llama3.2:latest",
+            "messages": [
+              {
+                "role": "system",
+                "content": "Current time is 10:46:10. Today's date is 2025-03-08.\nYou are a voice assistant for Home Assistant.\nAnswer questions about the world truthfully.\nAnswer in plain text. Keep it simple and to the point."
+              },
+              {
+                "role": "user",
+                "content": " What time is it?"
+              },
+              {
+                "role": "assistant",
+                "content": "Bro! ",
+                "tool_calls": null
+              },
+              {
+                "role": "user",
+                "content": " What time is it?"
+              }
+            ],
+            "tools": [],
+            "stream": false,
+            "format": "",
+            "options": {
+              "num_ctx": 8192
+            },
+            "keep_alive": "-1s"
+          },
+          "webhookUrl": "http://localhost:5678/api/chat",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Chat": {
+      "main": [
+        [
+          {
+            "node": "User Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Event Manager": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failure Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Failure Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Call": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tools Confirmation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Home Automation Manager": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3acecbbb-9593-46b1-9c23-da32111ea490",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ac975547172c3ff12852fb9beb91829001191c03132e040ed45fb2e0cd1f79c6"
+  },
+  "id": "QPq9vMC0SUSvRG1e",
+  "tags": []
+}
